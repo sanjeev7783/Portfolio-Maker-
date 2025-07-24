@@ -115,6 +115,24 @@ export default function Portfolio({ userId }: PortfolioProps) {
 
   const { user, projects, experience, education, skills, certifications } = data
 
+  const handleResumeDownload = () => {
+    if (user.resume_url && user.resume_url.startsWith('data:')) {
+      try {
+        const link = document.createElement('a')
+        link.href = user.resume_url
+        link.download = `${user.name.replace(/\s+/g, '_')}_Resume.pdf`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      } catch (error) {
+        console.error('Download error:', error)
+        alert('Error downloading resume. Please try again.')
+      }
+    } else {
+      alert('Resume not available for download')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -158,16 +176,19 @@ export default function Portfolio({ userId }: PortfolioProps) {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
-              <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+              <h1 className="text-2xl md:text-3xl font-bold leading-tight">
                 Hey folks, I'm{" "}
-                <span className="text-4xl md:text-6xl font-semibold text-cyan-100">
+                <span className="text-2xl md:text-3xl font-semibold text-cyan-100">
                   {showName ? ` ${user.name.split(" ")[0].charAt(0).toUpperCase() + user.name.split(" ")[0].slice(1).toLowerCase()}` : `${user.title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}`}
                 </span>
               </h1>
               <div className="bg-black/30 backdrop-blur-sm rounded-lg p-4 border border-white/20">
                 <p className="text-lg md:text-xl leading-relaxed text-white font-medium">{user.bio}</p>
               </div>
-              <Button className="bg-white text-cyan-600 hover:bg-gray-100">
+              <Button 
+                className="bg-white text-cyan-600 hover:bg-gray-100 cursor-pointer"
+                onClick={handleResumeDownload}
+              >
                 <Download className="w-4 h-4 mr-2" />
                 Download Resume
               </Button>

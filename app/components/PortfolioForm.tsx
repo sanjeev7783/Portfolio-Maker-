@@ -33,6 +33,7 @@ export default function PortfolioForm() {
     technologies: "",
     styling: "",
     certifications: [{ title: "", issuer: "", date: "", credential_url: "" }],
+    resume: null,
   })
 
   const addArrayItem = (
@@ -100,6 +101,10 @@ export default function PortfolioForm() {
       alert("Please enter at least one technology")
       return false
     }
+    if (!formData.resume) {
+      alert("Please upload your resume (PDF format only)")
+      return false
+    }
     return true
   }
 
@@ -115,12 +120,29 @@ export default function PortfolioForm() {
     try {
       console.log("Form: Starting submission")
 
+      // Convert resume to base64 if present
+      let resumeBase64 = null
+      if (formData.resume) {
+        // Check file size (limit to 5MB)
+        if (formData.resume.size > 5 * 1024 * 1024) {
+          alert('Resume file is too large. Please use a file smaller than 5MB.')
+          return
+        }
+        
+        resumeBase64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = () => resolve(reader.result)
+          reader.onerror = () => reject(new Error('Failed to read file'))
+          reader.readAsDataURL(formData.resume!)
+        })
+      }
+
       const response = await fetch("/api/portfolio", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({...formData, resume: resumeBase64}),
       })
 
       console.log("Form: Response status:", response.status)
@@ -265,6 +287,16 @@ export default function PortfolioForm() {
               </div>
             </div>
             <div>
+              <Label htmlFor="resume" className="mb-2 block">Upload Resume (PDF only) *</Label>
+              <Input
+                id="resume"
+                type="file"
+                accept=".pdf"
+                required
+                onChange={(e) => setFormData((prev) => ({ ...prev, resume: e.target.files?.[0] || null }))}
+              />
+            </div>
+            <div className="md:col-span-2">
               <Label htmlFor="bio" className="mb-2 block">Bio *</Label>
               <Textarea
                 id="bio"

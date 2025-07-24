@@ -5,16 +5,16 @@ async function getFromDatabase(userId: string) {
   try {
     const { sql } = await import("@/lib/db")
 
-    const users = await sql`SELECT * FROM users WHERE id = ${userId}::uuid`
+    const users = await sql`SELECT * FROM users WHERE id::text = ${userId}`
     if (users.length === 0) {
       return null
     }
 
-    const projects = await sql`SELECT * FROM projects WHERE user_id = ${userId}::uuid ORDER BY order_index`
-    const experience = await sql`SELECT * FROM experience WHERE user_id = ${userId}::uuid ORDER BY order_index`
-    const education = await sql`SELECT * FROM education WHERE user_id = ${userId}::uuid ORDER BY order_index`
-    const skills = await sql`SELECT * FROM skills WHERE user_id = ${userId}::uuid ORDER BY order_index`
-    const certifications = await sql`SELECT * FROM certifications WHERE user_id = ${userId}::uuid ORDER BY order_index`
+    const projects = await sql`SELECT * FROM projects WHERE user_id::text = ${userId} ORDER BY order_index`
+    const experience = await sql`SELECT * FROM experience WHERE user_id::text = ${userId} ORDER BY order_index`
+    const education = await sql`SELECT * FROM education WHERE user_id::text = ${userId} ORDER BY order_index`
+    const skills = await sql`SELECT * FROM skills WHERE user_id::text = ${userId} ORDER BY order_index`
+    const certifications = await sql`SELECT * FROM certifications WHERE user_id::text = ${userId} ORDER BY order_index`
 
     const groupedSkills = skills.reduce(
       (acc: any, skill: any) => {
@@ -42,7 +42,9 @@ async function getFromDatabase(userId: string) {
 }
 
 function getFromMemory(userId: string) {
+  console.log('Memory storage users:', Array.from(memoryStorage.users.keys()))
   const user = memoryStorage.users.get(userId)
+  console.log('Found user in memory:', !!user)
   if (!user) {
     return null
   }

@@ -117,4 +117,7 @@ export interface PortfolioFormData {
     date: string
     credential_url: string
   }[]
+
+  // Resume
+  resume?: File | string | null
 }

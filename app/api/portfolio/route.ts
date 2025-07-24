@@ -7,12 +7,22 @@ async function saveToDatabase(data: PortfolioFormData, userId: string) {
   try {
     const { sql } = await import("@/lib/db")
 
-    // Insert user
+    // Handle resume upload - store base64 data
+    let resumeUrl = null
+    if (data.resume) {
+      resumeUrl = data.resume // Store the base64 data URL directly
+    }
+
+    // Insert user (resume stored in memory for now) - handle duplicate emails
     await sql`
       INSERT INTO users (id, email, name, title, bio, phone, location, website, github, linkedin, instagram)
-      VALUES (${userId}::uuid, ${data.email}, ${data.name}, ${data.title}, ${data.bio},
+      VALUES (${userId}::uuid, ${data.email || `${userId}@temp.com`}, ${data.name}, ${data.title}, ${data.bio},
               ${data.phone || null}, ${data.location || null}, ${data.website || null},
               ${data.github || null}, ${data.linkedin || null}, ${data.instagram || null})
+      ON CONFLICT (email) DO UPDATE SET
+        name = EXCLUDED.name,
+        title = EXCLUDED.title,
+        bio = EXCLUDED.bio
     `
 
     // Insert projects
@@ -104,6 +114,7 @@ function saveToMemory(data: PortfolioFormData, userId: string) {
       github: data.github,
       linkedin: data.linkedin,
       instagram: data.instagram,
+      resume_url: data.resume || null,
       created_at: new Date(),
     })
 

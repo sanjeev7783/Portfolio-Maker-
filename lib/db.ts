@@ -27,6 +27,7 @@ export async function initializeDatabase() {
         github VARCHAR(255),
         linkedin VARCHAR(255),
         instagram VARCHAR(255),
+        resume_url VARCHAR(500),
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       )

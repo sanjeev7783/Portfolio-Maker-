@@ -154,7 +154,7 @@ function saveToMemory(data: PortfolioFormData, userId: string) {
     memoryStorage.certifications.set(userId, data.certifications || [])
 
     // Process skills
-    const skills = []
+    const skills: { category: string; name: string; order_index: number }[] = []
     if (data.languages) {
       data.languages.split(",").forEach((skill, index) => {
         const trimmed = skill.trim()

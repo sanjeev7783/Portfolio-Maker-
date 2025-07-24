@@ -86,8 +86,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       console.log("API: Attempting database fetch")
       try {
         portfolioData = await getFromDatabase(userId)
-      } catch (dbError: any) {
-        console.error("API: Database fetch failed, trying memory:", dbError.message)
+      } catch (dbError: unknown) {
+        const errorMessage = dbError instanceof Error ? dbError.message : 'Unknown error'
+        console.error("API: Database fetch failed, trying memory:", errorMessage)
         portfolioData = getFromMemory(userId)
       }
     } else {

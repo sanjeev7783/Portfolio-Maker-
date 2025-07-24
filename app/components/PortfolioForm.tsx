@@ -122,7 +122,7 @@ export default function PortfolioForm() {
 
       // Convert resume to base64 if present
       let resumeBase64 = null
-      if (formData.resume) {
+      if (formData.resume && formData.resume instanceof File) {
         // Check file size (limit to 5MB)
         if (formData.resume.size > 5 * 1024 * 1024) {
           alert('Resume file is too large. Please use a file smaller than 5MB.')
@@ -133,7 +133,7 @@ export default function PortfolioForm() {
           const reader = new FileReader()
           reader.onload = () => resolve(reader.result)
           reader.onerror = () => reject(new Error('Failed to read file'))
-          reader.readAsDataURL(formData.resume!)
+          reader.readAsDataURL(formData.resume as File)
         })
       }
 

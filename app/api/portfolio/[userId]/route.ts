@@ -53,14 +53,15 @@ function getFromMemory(userId: string) {
 
   const skills = memoryStorage.skills.get(userId) || []
   const groupedSkills = skills.reduce(
-    (acc: Record<string, string[]>, skill: { category: string; name: string }) => {
-      if (!acc[skill.category]) {
-        acc[skill.category] = []
+    (acc: Record<string, string[]>, skill: unknown) => {
+      const typedSkill = skill as { category: string; name: string }
+      if (!acc[typedSkill.category]) {
+        acc[typedSkill.category] = []
       }
-      acc[skill.category].push(skill.name)
+      acc[typedSkill.category].push(typedSkill.name)
       return acc
     },
-    { languages: [], technologies: [], styling: [] },
+    { languages: [], technologies: [], styling: [] } as Record<string, string[]>,
   )
 
   return {

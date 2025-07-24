@@ -7,22 +7,64 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Github, Linkedin, Instagram, Globe, Phone, Mail, Download, ExternalLink } from "lucide-react"
 
+interface ProjectType {
+  id?: string
+  title: string
+  duration: string
+  description: string
+  achievements: string | string[]
+  technologies: string | string[]
+}
+
+interface ExperienceType {
+  id?: string
+  title: string
+  duration: string
+  company: string
+  location: string
+  responsibilities: string | string[]
+}
+
+interface EducationType {
+  id?: string
+  degree: string
+  duration: string
+  institution: string
+  grade?: string
+}
+
+interface CertificationType {
+  id?: string
+  title: string
+  issuer: string
+  date: string
+  credential_url?: string
+}
+
+interface UserType {
+  name: string
+  title: string
+  bio: string
+  resume_url?: string
+  email?: string
+  phone?: string
+  github?: string
+  linkedin?: string
+  instagram?: string
+  website?: string
+}
+
 interface PortfolioData {
-  user: {
-    name: string
-    title: string
-    bio: string
-    resume_url?: string
-  }
-  projects: unknown[]
-  experience: unknown[]
-  education: unknown[]
+  user: UserType
+  projects: ProjectType[]
+  experience: ExperienceType[]
+  education: EducationType[]
   skills: {
     languages: string[]
     technologies: string[]
     styling: string[]
   }
-  certifications: unknown[]
+  certifications: CertificationType[]
 }
 
 interface PortfolioProps {
@@ -222,7 +264,8 @@ export default function Portfolio({ userId }: PortfolioProps) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-center mb-12">Project Work</h2>
             <div className="space-y-12">
-              {projects.map((project, index) => (
+              {projects.map((project, index) => {
+                return (
                 <Card key={project.id || index} className="p-6">
                   <CardContent className="space-y-4">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -251,7 +294,8 @@ export default function Portfolio({ userId }: PortfolioProps) {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+                )
+              })}
             </div>
           </div>
         </section>
@@ -263,7 +307,8 @@ export default function Portfolio({ userId }: PortfolioProps) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-center mb-12">Experience</h2>
             <div className="space-y-8">
-              {experience.map((exp, index) => (
+              {experience.map((exp, index) => {
+                return (
                 <Card key={exp.id || index} className="p-6 bg-gray-50">
                   <CardContent className="space-y-4">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -285,7 +330,8 @@ export default function Portfolio({ userId }: PortfolioProps) {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+                )
+              })}
             </div>
           </div>
         </section>
@@ -297,7 +343,8 @@ export default function Portfolio({ userId }: PortfolioProps) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-center mb-12">Education</h2>
             <div className="space-y-8">
-              {education.map((edu, index) => (
+              {education.map((edu, index) => {
+                return (
                 <Card key={edu.id || index} className="p-6">
                   <CardContent className="space-y-2">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -308,7 +355,8 @@ export default function Portfolio({ userId }: PortfolioProps) {
                     {edu.grade && <p className="text-gray-600">{edu.grade}</p>}
                   </CardContent>
                 </Card>
-              ))}
+                )
+              })}
             </div>
           </div>
         </section>
@@ -372,7 +420,8 @@ export default function Portfolio({ userId }: PortfolioProps) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl font-bold text-center mb-12">Certifications</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {certifications.map((cert, index) => (
+              {certifications.map((cert, index) => {
+                return (
                 <Card key={cert.id || index} className="p-6 text-center">
                   <CardContent className="space-y-4">
                     <h3 className="text-lg font-bold text-blue-600">{cert.title}</h3>
@@ -388,7 +437,8 @@ export default function Portfolio({ userId }: PortfolioProps) {
                     )}
                   </CardContent>
                 </Card>
-              ))}
+                )
+              })}
             </div>
           </div>
         </section>

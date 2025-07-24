@@ -8,16 +8,21 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Github, Linkedin, Instagram, Globe, Phone, Mail, Download, ExternalLink } from "lucide-react"
 
 interface PortfolioData {
-  user: any
-  projects: any[]
-  experience: any[]
-  education: any[]
+  user: {
+    name: string
+    title: string
+    bio: string
+    resume_url?: string
+  }
+  projects: unknown[]
+  experience: unknown[]
+  education: unknown[]
   skills: {
     languages: string[]
     technologies: string[]
     styling: string[]
   }
-  certifications: any[]
+  certifications: unknown[]
 }
 
 interface PortfolioProps {
@@ -78,9 +83,10 @@ export default function Portfolio({ userId }: PortfolioProps) {
         const portfolioData = await response.json()
         console.log("Portfolio data received:", portfolioData)
         setData(portfolioData)
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error fetching portfolio:", error)
-        setError(error.message)
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+        setError(errorMessage)
       } finally {
         setLoading(false)
       }
@@ -124,7 +130,7 @@ export default function Portfolio({ userId }: PortfolioProps) {
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Download error:', error)
         alert('Error downloading resume. Please try again.')
       }

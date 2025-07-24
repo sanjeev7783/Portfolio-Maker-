@@ -14,13 +14,14 @@ export async function GET() {
       message: "Database connection successful",
       result: result[0],
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Database test failed:", error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
       {
         success: false,
-        error: error.message,
-        details: process.env.NODE_ENV === "development" ? error.stack : undefined,
+        error: errorMessage,
+        details: process.env.NODE_ENV === "development" && error instanceof Error ? error.stack : undefined,
       },
       { status: 500 },
     )

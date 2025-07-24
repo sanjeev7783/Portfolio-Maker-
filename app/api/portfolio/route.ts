@@ -7,8 +7,7 @@ async function saveToDatabase(data: PortfolioFormData, userId: string) {
   try {
     const { sql } = await import("@/lib/db")
 
-    // Handle resume upload - store base64 data
-    const resumeUrl = data.resume || null
+    // Resume handled in memory storage
 
     // Insert user (resume stored in memory for now) - handle duplicate emails
     await sql`
@@ -89,9 +88,10 @@ async function saveToDatabase(data: PortfolioFormData, userId: string) {
     }
 
     return { success: true }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Database save error:", error)
-    throw new Error(`Database error: ${error.message}`)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    throw new Error(`Database error: ${errorMessage}`)
   }
 }
 

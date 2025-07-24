@@ -1,10 +1,10 @@
 interface StorageData {
-  users: Map<string, any>
-  projects: Map<string, any[]>
-  experience: Map<string, any[]>
-  education: Map<string, any[]>
-  skills: Map<string, any[]>
-  certifications: Map<string, any[]>
+  users: Map<string, unknown>
+  projects: Map<string, unknown[]>
+  experience: Map<string, unknown[]>
+  education: Map<string, unknown[]>
+  skills: Map<string, unknown[]>
+  certifications: Map<string, unknown[]>
 }
 
 const memoryStorage: StorageData = {
@@ -33,8 +33,9 @@ export async function testDatabaseConnection() {
     const sql = neon(process.env.DATABASE_URL!);
     await sql`SELECT 1 as test`;
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    return { success: false, error: errorMessage };
   }
 }
 

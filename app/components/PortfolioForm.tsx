@@ -188,9 +188,10 @@ export default function PortfolioForm() {
       } else {
         alert("Error creating portfolio: " + (result.error || "Unknown error"))
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Form: Network Error:", error)
-      alert(`Network error: ${error.message}. Please check your connection and try again.`)
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      alert(`Network error: ${errorMessage}. Please check your connection and try again.`)
     } finally {
       setLoading(false)
     }

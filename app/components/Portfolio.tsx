@@ -177,7 +177,7 @@ export default function Portfolio({ userId }: PortfolioProps) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h1 className="text-2xl md:text-3xl font-bold leading-tight">
-                Hey folks, I'm{" "}
+                Hey folks, I&apos;m{" "}
                 <span className="text-2xl md:text-3xl font-semibold text-cyan-100">
                   {showName ? ` ${user.name.split(" ")[0].charAt(0).toUpperCase() + user.name.split(" ")[0].slice(1).toLowerCase()}` : `${user.title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}`}
                 </span>

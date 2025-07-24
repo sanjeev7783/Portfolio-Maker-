@@ -17,7 +17,7 @@ async function getFromDatabase(userId: string) {
     const certifications = await sql`SELECT * FROM certifications WHERE user_id::text = ${userId} ORDER BY order_index`
 
     const groupedSkills = skills.reduce(
-      (acc: any, skill: any) => {
+      (acc: Record<string, string[]>, skill: { category: string; name: string }) => {
         if (!acc[skill.category]) {
           acc[skill.category] = []
         }
@@ -35,9 +35,10 @@ async function getFromDatabase(userId: string) {
       skills: groupedSkills,
       certifications,
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Database fetch error:", error)
-    throw new Error(`Database error: ${error.message}`)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    throw new Error(`Database error: ${errorMessage}`)
   }
 }
 
@@ -51,7 +52,7 @@ function getFromMemory(userId: string) {
 
   const skills = memoryStorage.skills.get(userId) || []
   const groupedSkills = skills.reduce(
-    (acc: any, skill: any) => {
+    (acc: Record<string, string[]>, skill: { category: string; name: string }) => {
       if (!acc[skill.category]) {
         acc[skill.category] = []
       }
@@ -101,12 +102,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     console.log("API: Portfolio fetched successfully")
     return NextResponse.json(portfolioData)
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("API: Fetch error:", error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
       {
         error: "Failed to fetch portfolio",
-        details: process.env.NODE_ENV === "development" ? error.message : undefined,
+        details: process.env.NODE_ENV === "development" ? errorMessage : undefined,
       },
       { status: 500 },
     )

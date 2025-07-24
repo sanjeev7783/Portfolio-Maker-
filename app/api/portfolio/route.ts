@@ -8,10 +8,7 @@ async function saveToDatabase(data: PortfolioFormData, userId: string) {
     const { sql } = await import("@/lib/db")
 
     // Handle resume upload - store base64 data
-    let resumeUrl = null
-    if (data.resume) {
-      resumeUrl = data.resume // Store the base64 data URL directly
-    }
+    const resumeUrl = data.resume || null
 
     // Insert user (resume stored in memory for now) - handle duplicate emails
     await sql`
@@ -185,9 +182,10 @@ function saveToMemory(data: PortfolioFormData, userId: string) {
     memoryStorage.skills.set(userId, skills)
 
     return { success: true }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Memory save error:", error)
-    throw new Error(`Memory storage error: ${error.message}`)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    throw new Error(`Memory storage error: ${errorMessage}`)
   }
 }
 
@@ -202,7 +200,7 @@ export async function POST(request: NextRequest) {
       console.log("API: Request body length:", body.length)
       data = JSON.parse(body)
       console.log("API: Parsed data successfully")
-    } catch (parseError: any) {
+    } catch (parseError: unknown) {
       console.error("API: JSON parse error:", parseError)
       return NextResponse.json({ success: false, error: "Invalid JSON in request body" }, { status: 400 })
     }
@@ -230,8 +228,9 @@ export async function POST(request: NextRequest) {
       try {
         saveResult = await saveToDatabase(data, userId)
         console.log("API: Database save successful")
-      } catch (dbError: any) {
-        console.error("API: Database save failed, falling back to memory:", dbError.message)
+      } catch (dbError: unknown) {
+        const errorMessage = dbError instanceof Error ? dbError.message : 'Unknown error'
+        console.error("API: Database save failed, falling back to memory:", errorMessage)
         saveResult = saveToMemory(data, userId)
         console.log("API: Memory save successful")
       }
@@ -252,13 +251,14 @@ export async function POST(request: NextRequest) {
     } else {
       throw new Error("Save operation failed")
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("API: Unexpected error:", error)
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error'
     return NextResponse.json(
       {
         success: false,
-        error: error.message || "Internal server error",
-        details: process.env.NODE_ENV === "development" ? error.stack : undefined,
+        error: errorMessage,
+        details: process.env.NODE_ENV === "development" && error instanceof Error ? error.stack : undefined,
       },
       { status: 500 },
     )

@@ -5,7 +5,7 @@ import Image from "next/image"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Github, Linkedin, Instagram, Globe, Phone, Mail, Download, ExternalLink } from "lucide-react"
+import { Github, Linkedin, Instagram, Globe, Phone, Mail, Download, ExternalLink, Copy, Check } from "lucide-react"
 
 interface ProjectType {
   id?: string
@@ -102,7 +102,8 @@ export default function Portfolio({ userId }: PortfolioProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const [showName, setShowName] = useState(true);
+  const [showName, setShowName] = useState(true)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -181,6 +182,17 @@ export default function Portfolio({ userId }: PortfolioProps) {
     }
   }
 
+  const handleCopyPortfolioLink = async () => {
+    try {
+      const portfolioUrl = `${window.location.origin}/portfolio/${userId}`
+      await navigator.clipboard.writeText(portfolioUrl)
+      setCopied(true)
+    } catch (error) {
+      console.error('Copy error:', error)
+      alert('Failed to copy link. Please try again.')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -222,6 +234,27 @@ export default function Portfolio({ userId }: PortfolioProps) {
         style={{ backgroundImage: `url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80)` }}
       >
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+
+          {!copied ? (
+            <div className="flex justify-center">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopyPortfolioLink}
+                className="flex items-center space-x-2 text-black hover:text-blue-600 hover:bg-gray-100 transition duration-200"
+              >
+                <Copy className="w-4 h-4" />
+                <span>Copy Portfolio Link</span>
+              </Button>
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <div className="flex items-center space-x-2 text-green-600 font-medium bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-md">
+                <Check className="w-4 h-4" />
+                <span>Copied!</span>
+              </div>
+            </div>
+          )}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h1 className="text-2xl md:text-3xl font-bold leading-tight">
@@ -233,7 +266,7 @@ export default function Portfolio({ userId }: PortfolioProps) {
               <div className="bg-black/30 backdrop-blur-sm rounded-lg p-4 border border-white/20">
                 <p className="text-lg md:text-xl leading-relaxed text-white font-medium">{user.bio}</p>
               </div>
-              <Button 
+              <Button
                 className="bg-white text-cyan-600 hover:bg-gray-100 cursor-pointer"
                 onClick={handleResumeDownload}
               >
@@ -266,34 +299,34 @@ export default function Portfolio({ userId }: PortfolioProps) {
             <div className="space-y-12">
               {projects.map((project, index) => {
                 return (
-                <Card key={project.id || index} className="p-6">
-                  <CardContent className="space-y-4">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                      <h3 className="text-xl font-bold text-blue-600">{project.title}</h3>
-                      <span className="text-sm text-gray-600">{project.duration}</span>
-                    </div>
-                    <p className="text-gray-700">{project.description}</p>
+                  <Card key={project.id || index} className="p-6">
+                    <CardContent className="space-y-4">
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                        <h3 className="text-xl font-bold text-blue-600">{project.title}</h3>
+                        <span className="text-sm text-gray-600">{project.duration}</span>
+                      </div>
+                      <p className="text-gray-700">{project.description}</p>
 
-                    {/* Achievements */}
-                    <div className="space-y-2">
-                      {toArray(project.achievements).map((achievement, idx) => (
-                        <div key={idx} className="flex items-start">
-                          <span className="text-blue-600 mr-2">•</span>
-                          <span className="text-gray-700">{achievement}</span>
-                        </div>
-                      ))}
-                    </div>
+                      {/* Achievements */}
+                      <div className="space-y-2">
+                        {toArray(project.achievements).map((achievement, idx) => (
+                          <div key={idx} className="flex items-start">
+                            <span className="text-blue-600 mr-2">•</span>
+                            <span className="text-gray-700">{achievement}</span>
+                          </div>
+                        ))}
+                      </div>
 
-                    {/* Technologies */}
-                    <div className="flex flex-wrap gap-2 mt-4">
-                      {toCommaSeparatedArray(project.technologies).map((tech, idx) => (
-                        <span key={idx} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
+                      {/* Technologies */}
+                      <div className="flex flex-wrap gap-2 mt-4">
+                        {toCommaSeparatedArray(project.technologies).map((tech, idx) => (
+                          <span key={idx} className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
                 )
               })}
             </div>
@@ -309,27 +342,27 @@ export default function Portfolio({ userId }: PortfolioProps) {
             <div className="space-y-8">
               {experience.map((exp, index) => {
                 return (
-                <Card key={exp.id || index} className="p-6 bg-gray-50">
-                  <CardContent className="space-y-4">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                      <h3 className="text-xl font-bold">{exp.title}</h3>
-                      <span className="text-sm text-gray-600">{exp.duration}</span>
-                    </div>
-                    <p className="text-blue-600 font-medium">
-                      {exp.company} — {exp.location}
-                    </p>
+                  <Card key={exp.id || index} className="p-6 bg-gray-50">
+                    <CardContent className="space-y-4">
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                        <h3 className="text-xl font-bold">{exp.title}</h3>
+                        <span className="text-sm text-gray-600">{exp.duration}</span>
+                      </div>
+                      <p className="text-blue-600 font-medium">
+                        {exp.company} — {exp.location}
+                      </p>
 
-                    {/* Responsibilities */}
-                    <div className="space-y-2">
-                      {toArray(exp.responsibilities).map((responsibility, idx) => (
-                        <div key={idx} className="flex items-start">
-                          <span className="text-blue-600 mr-2">•</span>
-                          <span className="text-gray-700">{responsibility}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
+                      {/* Responsibilities */}
+                      <div className="space-y-2">
+                        {toArray(exp.responsibilities).map((responsibility, idx) => (
+                          <div key={idx} className="flex items-start">
+                            <span className="text-blue-600 mr-2">•</span>
+                            <span className="text-gray-700">{responsibility}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
                 )
               })}
             </div>
@@ -345,16 +378,16 @@ export default function Portfolio({ userId }: PortfolioProps) {
             <div className="space-y-8">
               {education.map((edu, index) => {
                 return (
-                <Card key={edu.id || index} className="p-6">
-                  <CardContent className="space-y-2">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                      <h3 className="text-xl font-bold text-green-600">{edu.degree}</h3>
-                      <span className="text-sm text-gray-600">{edu.duration}</span>
-                    </div>
-                    <p className="text-gray-700">{edu.institution}</p>
-                    {edu.grade && <p className="text-gray-600">{edu.grade}</p>}
-                  </CardContent>
-                </Card>
+                  <Card key={edu.id || index} className="p-6">
+                    <CardContent className="space-y-2">
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                        <h3 className="text-xl font-bold text-green-600">{edu.degree}</h3>
+                        <span className="text-sm text-gray-600">{edu.duration}</span>
+                      </div>
+                      <p className="text-gray-700">{edu.institution}</p>
+                      {edu.grade && <p className="text-gray-600">{edu.grade}</p>}
+                    </CardContent>
+                  </Card>
                 )
               })}
             </div>
@@ -422,21 +455,21 @@ export default function Portfolio({ userId }: PortfolioProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {certifications.map((cert, index) => {
                 return (
-                <Card key={cert.id || index} className="p-6 text-center">
-                  <CardContent className="space-y-4">
-                    <h3 className="text-lg font-bold text-blue-600">{cert.title}</h3>
-                    <p className="text-gray-700">{cert.issuer}</p>
-                    <p className="text-sm text-gray-600">{cert.date}</p>
-                    {cert.credential_url && (
-                      <Button variant="outline" size="sm" asChild>
-                        <a href={cert.credential_url} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          View Certificate
-                        </a>
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
+                  <Card key={cert.id || index} className="p-6 text-center">
+                    <CardContent className="space-y-4">
+                      <h3 className="text-lg font-bold text-blue-600">{cert.title}</h3>
+                      <p className="text-gray-700">{cert.issuer}</p>
+                      <p className="text-sm text-gray-600">{cert.date}</p>
+                      {cert.credential_url && (
+                        <Button variant="outline" size="sm" asChild>
+                          <a href={cert.credential_url} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            View Certificate
+                          </a>
+                        </Button>
+                      )}
+                    </CardContent>
+                  </Card>
                 )
               })}
             </div>
